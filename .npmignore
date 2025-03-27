@@ -1,0 +1,33 @@
+# Source
+src/
+dev/
+
+# Configs
+.github
+.vscode
+.turbo
+*.config.js
+*.config.mjs
+*.config.ts
+*.config.json
+tsconfig.json
+.eslintrc
+.prettierrc
+.swcrc
+
+# Tests
+__tests__
+jest.config.js
+*.test.js
+*.test.ts
+*.test.tsx
+
+# Misc
+.DS_Store
+*.log
+.git
+.gitignore
+.env
+.env.example
+*.tsbuildinfo
+node_modules 
