@@ -2,3 +2,5 @@
 // No client directives should be used here
 
 // Currently no server components are needed
+
+export {};

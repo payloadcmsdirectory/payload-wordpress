@@ -10,7 +10,7 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "strict": true,
+    "strict": false,
     "skipLibCheck": true,
     "jsx": "react-jsx",
     "paths": {

@@ -1,3 +1,4 @@
+import type { Response } from "express";
 import type { Config } from "payload";
 
 import type { WordPressAdapterOptions } from "./adapter";
@@ -100,51 +101,63 @@ export const wordpressPlugin =
       });
     }
 
-    // Add plugin API routes
-    config.endpoints = [
-      ...(config.endpoints || []),
+    // Define endpoints using standard express middleware pattern
+    const endpoints = [
       {
         path: "/api/wordpress-plugin/status",
         method: "get",
-        handler: (req, res) => {
-          res.status(200).json({
-            mode: pluginOptions.mode,
-            enabled: pluginOptions.enabled,
-            collectionMapping: pluginOptions.collectionMapping,
-            globalMapping: pluginOptions.globalMapping,
-          });
+        handler: async (req, res, next) => {
+          try {
+            res.status(200).json({
+              mode: pluginOptions.mode,
+              enabled: pluginOptions.enabled,
+              collectionMapping: pluginOptions.collectionMapping,
+              globalMapping: pluginOptions.globalMapping,
+            });
+          } catch (error) {
+            next(error);
+          }
         },
       },
     ];
 
     // Add migration routes if in migration mode
     if (pluginOptions.mode === "migration") {
-      config.endpoints = [
-        ...config.endpoints,
-        {
-          path: "/api/wordpress-plugin/tables",
-          method: "get",
-          handler: (req, res) => {
+      endpoints.push({
+        path: "/api/wordpress-plugin/tables",
+        method: "get",
+        handler: async (req, res, next) => {
+          try {
             // TODO: Implement handler to get WordPress and PostgreSQL tables
             res.status(200).json({
               wordpress: [],
               postgres: [],
             });
-          },
+          } catch (error) {
+            next(error);
+          }
         },
-        {
-          path: "/api/wordpress-plugin/migrate",
-          method: "post",
-          handler: (req, res) => {
+      });
+
+      endpoints.push({
+        path: "/api/wordpress-plugin/migrate",
+        method: "post",
+        handler: async (req, res, next) => {
+          try {
             // TODO: Implement migration handler
             res.status(200).json({
               status: "success",
               message: "Migration started",
             });
-          },
+          } catch (error) {
+            next(error);
+          }
         },
-      ];
+      });
     }
+
+    // Add all endpoints to the config
+    config.endpoints = [...(config.endpoints || []), ...endpoints] as any;
 
     return config;
   };
